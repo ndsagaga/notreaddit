@@ -23,7 +23,7 @@ class IRModel:
             if (word not in self._termList):
                 self._termList.append(word)
                 _docList = []
-                doc = DocTerm(article.id - 1, 1)
+                doc = DocTerm(article.id, 1)
                 _docList.append(doc)
                 self._docLists.append(_docList)
             else:
@@ -31,13 +31,13 @@ class IRModel:
                 _docList = self._docLists[index]
 
                 for dt in _docList:
-                    if (dt.docId == article.id - 1):
+                    if (dt.docId == article.id):
                         dt.tw += 1
                         match = True
                         break
 
                 if (not match):
-                    doc = DocTerm(article.id - 1, 1)
+                    doc = DocTerm(article.id, 1)
                     _docList.append(doc)
 
     # computer tfidf
