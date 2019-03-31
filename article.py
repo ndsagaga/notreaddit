@@ -38,11 +38,11 @@ def chunk(tokens, grammar=None):
         grammar = ('''
                     NP: {<DT>?<JJ>*<NN.?>+}
                     NIN: {<N(IN|P)><IN><NP>} 
-                    NVN: {<N(IN|P)><VB.?><N(IN|P)>?}-
+                    NVN: {<N(IN|P)><VB.?><N(IN|P)>?}
                     ''')
     chunkParser = nltk.RegexpParser(grammar)
     return chunkParser.parse(tokens)
 
 
 if __name__ == '__main__':
-    print(pos_tag.posTag("she thought about it, and said \"great\""))
+    print(pos_tag.posTag("all the good goods were discarded"))

@@ -1,21 +1,24 @@
-import math
 import operator
+
+import math
+
+from pos_tag import posTag
 
 
 class IRModel:
-    _termList = []
-    _docLists = []
-    _docLength = []
-    _queryLength = 0.0
 
     def __init__(self):
         self.N = 0
+        self._termList = []
+        self._docLists = []
+        self._docLength = []
+        self._queryLength = 0.0
 
     # split the words of one article
     # populate termList with raw terms
     # each term in the termList has a docList of DocTerm instance
     def addDoc(self, article):
-        words = article.body.split()
+        words = [x[0] for x in article.tokens]
         self.N += 1
 
         for i in range(len(words)):
@@ -64,9 +67,10 @@ class IRModel:
     # Ranked retrieval based on cosine similarity
     def rankedSearch(self, query):
         docs = dict()
-        docList = []
+        queryTokens = posTag(query)
 
-        for term in query:
+        for token in queryTokens:
+            term = token[0]
             index = -1
 
             for _, word in enumerate(self._termList):

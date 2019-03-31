@@ -3,8 +3,10 @@ import json
 from IRModel import IRModel
 from article import Article
 
+ir = None
 
 def fileToArticles(filename):
+    global ir
     i = 0
     articles = []
     ir = IRModel()
@@ -28,7 +30,13 @@ def fileToArticles(filename):
 
 
 if __name__ == '__main__':
-    fileToArticles("data.json")
+    articles = fileToArticles("data.json")
+    results = ir.rankedSearch("goods")
+    print(results)
+
+    for r in results:
+        print(articles[r].body)
+        articles[r].tree.draw()
     # tos = []
     # with open("data.json") as outfile:
     #     json_data = json.load(outfile)
