@@ -1,4 +1,6 @@
 import math
+import operator
+
 
 class IRModel:
     _termList = []
@@ -40,6 +42,7 @@ class IRModel:
                     doc = DocTerm(article.id, 1)
                     _docList.append(doc)
 
+
     # computer tfidf
     def build(self):
         self._docLength = [0] * self.N
@@ -56,6 +59,7 @@ class IRModel:
 
         for i in range(self.N):
             self._docLength[i] = math.sqrt(self._docLength[i])
+
 
     # Ranked retrieval based on cosine similarity
     def rankedSearch(self, query):
@@ -95,12 +99,14 @@ class IRModel:
         for docScore in docs.values():
             numerator += docScore
 
-        cosineVals = [0] * len(self._docLength)
+        cosineVals = dict()
 
         for docId, docScore in docs.items():
             cosineVals[docId] = numerator / (self._queryLength * self._docLength[docId])
 
-        print(cosineVals)
+        sorted_cosine = sorted(cosineVals.items(), key=operator.itemgetter(1), reverse=True)
+
+        return [x[0] for x in sorted_cosine]
 
 
 class DocTerm:
