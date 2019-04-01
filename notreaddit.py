@@ -1,9 +1,11 @@
 import json
+import sys
 
 from IRModel import IRModel
 from article import Article
 
 ir = None
+
 
 def fileToArticles(filename):
     global ir
@@ -13,6 +15,7 @@ def fileToArticles(filename):
 
     try:
         with open(filename) as outfile:
+            print("Loading data from " + filename)
             json_data = json.load(outfile)
 
             for data in json_data['data']:
@@ -30,10 +33,26 @@ def fileToArticles(filename):
 
 
 if __name__ == '__main__':
-    articles = fileToArticles("data.json")
-    results = ir.rankedSearch("goods")
-    print(results)
+    if len(sys.argv) >= 2:
+        articles = fileToArticles(sys.argv[1])
+    else:
+        articles = fileToArticles("data.json")
 
-    for r in results:
-        print(articles[r].body)
-        articles[r].tree.draw()
+    query = input("Enter a query or enter 'exit': ")
+
+    while query != 'exit':
+        results = ir.rankedSearch(query)
+
+        for r in results:
+            print("Article id: " + str(articles[r].id))
+            print("Title: " + str(articles[r].title))
+            print("Content: " + str(articles[r].body))
+            print("-------------------------------------------------------------------------------")
+
+            # if running in remote headless server, will throw error
+            try:
+                articles[r].tree.draw()
+            except:
+                print(articles[r].tree)
+
+        query = input("Enter a query or enter 'exit': ")
