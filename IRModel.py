@@ -48,6 +48,7 @@ class IRModel:
 
     # computer tfidf
     def build(self):
+        print("Building the Vector Space Model")
         self._docLength = [0] * self.N
 
         for i in range(len(self._termList)):
