@@ -35,14 +35,13 @@ def getTimestamp(date, time):
 
 def chunk(tokens, grammar=None):
     if grammar is None:
+        # VVVV:RB MD VB - Check if this is required in the future
         grammar = ('''
-                    NP: {<DT>?<JJ>*<NN.?>+}
-                    NIN: {<N(IN|P)><IN><NP>} 
-                    NVN: {<N(IN|P)><VB.?><N(IN|P)>?}
+                    NNNN: {<DT>?<RB>*<JJ>*<NN.?>+}
+                    VVVV: {<RB>*<VB.?>+}
+                    NVN: {<.*N><VS><N.*>}
+                    NVIN: {<.*N><VVVV><IN><N.*>}
+                    NIN: {<.*N><IN><N.*>}
                     ''')
     chunkParser = nltk.RegexpParser(grammar)
     return chunkParser.parse(tokens)
-
-
-if __name__ == '__main__':
-    print(pos_tag.posTag("all the good goods were discarded"))

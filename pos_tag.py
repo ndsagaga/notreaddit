@@ -43,22 +43,22 @@ def removeWordsWithTags(tokens):
     tokenStack = []
     for token in tokens:
         if isNoun(token[1]):
-            if len(tokenStack) > 0 and isAdjective(tokenStack[-1][1]):
-                tokenStack.pop()
             tokenStack.append(token)
+            continue
 
         if isVerb(token[1]):
-            if len(tokenStack) > 0 and (isVerb(tokenStack[-1][1]) or isAdverb(tokenStack[-1][1])):
-                tokenStack.pop()
             tokenStack.append(token)
+            continue
 
         if isPronoun(token[1]):
             n = closelyRelatedNoun([t for t in tokenStack if isNoun(t)], token)
             if n:
                 tokenStack.append(n)
+            continue
 
-        if isPreposition(token[1]):
+        if isPreposition(token[1]) or isAdverb(token[1]) or isAdjective(token[1]):
             tokenStack.append(token)
+            continue
 
         if token[1] in [',', '.', ':', '\'', '\"', '(', ')', '!', '-']:
             continue
@@ -107,8 +107,3 @@ def get_wordnet_pos(pos):
 
 def closelyRelatedNoun(nouns, pronoun):
     return nouns[-1] if len(nouns) > 0 else None
-
-
-if __name__ == '__main__':
-    print(nltk.pos_tag(nltk.word_tokenize("The quick good fox jumps over the lazy dog")))
-    print(nltk.tag.pos_tag(nltk.word_tokenize("The quick brown fox jumps over the lazy dog")))

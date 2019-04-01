@@ -76,6 +76,7 @@ class IRModel:
             for _, word in enumerate(self._termList):
                 if word == term:
                     index = _
+                    break
 
             if index < 0:
                 continue
