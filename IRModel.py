@@ -25,28 +25,24 @@ class IRModel:
             match = False
             word = words[i]
 
-            if (word not in self._termList):
+            if word not in self._termList:
                 self._termList.append(word)
-                _docList = []
                 doc = DocTerm(article.id, 1)
-                _docList.append(doc)
-                self._docLists.append(_docList)
+                self._docLists.append([doc])
             else:
                 index = self._termList.index(word)
                 _docList = self._docLists[index]
 
                 for dt in _docList:
-                    if (dt.docId == article.id):
+                    if dt.docId == article.id:
                         dt.tw += 1
                         match = True
                         break
 
-                if (not match):
+                if not match:
                     doc = DocTerm(article.id, 1)
                     _docList.append(doc)
 
-
-    # computer tfidf
     def build(self):
         print("Building the Vector Space Model")
         self._docLength = [0] * self.N
@@ -94,21 +90,14 @@ class IRModel:
                 if (doc.docId not in docs):
                     docs[doc.docId] = score
                 else:
-                    score += docs[doc.docId]
-                    docs[doc.docId] = score
+                    docs[doc.docId] += score
 
         self._queryLength = math.sqrt(self._queryLength)
-
-        # normalization begins here
-        numerator = 0.0
-
-        for docScore in docs.values():
-            numerator += docScore
 
         cosineVals = dict()
 
         for docId, docScore in docs.items():
-            cosineVals[docId] = numerator / (self._queryLength * self._docLength[docId])
+            cosineVals[docId] = docScore / (self._queryLength * self._docLength[docId])
 
         sorted_cosine = sorted(cosineVals.items(), key=operator.itemgetter(1), reverse=True)
 

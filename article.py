@@ -12,13 +12,16 @@ class Article:
         self.title = data['title']
         self.body = data['content']
         self.timestamp = getTimestamp(data['date'], data['time'])
-        self.tokens, self.tree = process(data['content'])
+        self.tokens, self.trees = process(data['content'])
 
 
 def process(text):
     tokens = pos_tag.posTag(text)
-    tree = chunk(pos_tag.removeWordsWithTags(tokens))
-    return tokens, tree
+    trees = []
+    sentences = [x.strip() for x in text.split(".") if len(x.strip()) > 4]
+    for sentence in sentences:
+        trees.append(chunk(pos_tag.removeWordsWithTags(pos_tag.posTag(sentence))))
+    return tokens, trees
 
 
 def getTimestamp(date, time):
