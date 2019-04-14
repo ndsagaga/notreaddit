@@ -66,28 +66,6 @@ def removeWordsWithTags(tokens):
     return tokenStack
 
 
-def posTag(text):
-    tokens = nltk.word_tokenize(text)
-    tokens = nltk.tag.pos_tag(tokens)
-
-    cleanTokens = []
-
-    # basic stopwords removal
-    for token in tokens:
-        if isPossessive(token[1]):
-            continue
-        if isDeterminant(token[1]):
-            continue
-        # punctuations
-        if token[0] == token[1]:
-            continue
-
-        cleanTokens.append(
-            tuple([nltk.stem.WordNetLemmatizer().lemmatize(token[0], get_wordnet_pos(token[1])), token[1]]))
-
-    return cleanTokens
-
-
 def get_wordnet_pos(pos):
     """
     return WORDNET POS compliance to WORDENT lemmatization (a,n,r,v)
@@ -107,3 +85,34 @@ def get_wordnet_pos(pos):
 
 def closelyRelatedNoun(nouns, pronoun):
     return nouns[-1] if len(nouns) > 0 else None
+
+def posTag(text):
+    tokens = nltk.word_tokenize(text)
+    tokens = nltk.tag.pos_tag(tokens)
+
+    cleanTokens = []
+
+    # basic stopwords removal
+    for token in tokens:
+        if isPossessive(token[1]):
+            continue
+        if isDeterminant(token[1]):
+            continue
+        # punctuations
+        if token[0] == token[1]:
+            continue
+
+        cleanTokens.append(
+            tuple([nltk.stem.WordNetLemmatizer().lemmatize(token[0].lower(), get_wordnet_pos(token[1])), token[1]]))
+
+    return cleanTokens
+
+
+if __name__ == "__main__":
+    text = "US President Donald Trump is in very good health despite his weight being in the obese range, " \
+           "according to his official doctor Sean Conley."
+    tokens = posTag(text)
+    pureTokens = removeWordsWithTags(tokens)
+
+    for pureToken in pureTokens:
+        print("'" + pureToken[0] + "' -> " + pureToken[1])
