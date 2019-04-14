@@ -1,11 +1,12 @@
+import math
 import operator
 
-import math
-
-from pos_tag import posTag
+from pos_tag import *
 
 
 class IRModel:
+    _total = 0
+    posTagFrequencies = {"N": 0, "V": 0, "R": 0, "J": 0, "P": 0, "I": 0}
 
     def __init__(self):
         self.N = 0
@@ -18,16 +19,22 @@ class IRModel:
     # populate termList with raw terms
     # each term in the termList has a docList of DocTerm instance
     def addDoc(self, article):
-        words = [x[0] for x in article.tokens]
+        words = [(x[0], x[1]) for x in article.tokens]
         self.N += 1
 
         for i in range(len(words)):
             match = False
-            word = words[i]
+            word = words[i][0]
+
+            _key = words[i][1][0]
+
+            if _key in self.posTagFrequencies:
+                self.posTagFrequencies[_key] += 1
+                self._total += 1
 
             if word not in self._termList:
                 self._termList.append(word)
-                doc = DocTerm(article.id, 1)
+                doc = DocTerm(article.id, 1, _key)
                 self._docLists.append([doc])
             else:
                 index = self._termList.index(word)
@@ -40,7 +47,7 @@ class IRModel:
                         break
 
                 if not match:
-                    doc = DocTerm(article.id, 1)
+                    doc = DocTerm(article.id, 1, _key)
                     _docList.append(doc)
 
     def build(self):
@@ -65,10 +72,12 @@ class IRModel:
     def rankedSearch(self, query):
         docs = dict()
         queryTokens = posTag(query)
+        weight = 1
 
         for token in queryTokens:
             term = token[0]
             index = -1
+            _key = token[1][0]
 
             for _, word in enumerate(self._termList):
                 if word == term:
@@ -85,7 +94,12 @@ class IRModel:
 
             for i in range(len(docList)):
                 doc = docList[i]
-                score = doc.tw * qtfidf
+
+                weight = 1
+                if _key == doc.posTag and _key in self.posTagFrequencies:
+                    weight = 1 + self.posTagFrequencies[_key] / self._total * 1.0
+
+                score = doc.tw * qtfidf * weight
 
                 if (doc.docId not in docs):
                     docs[doc.docId] = score
@@ -105,6 +119,38 @@ class IRModel:
 
 
 class DocTerm:
-    def __init__(self, did, tw):
+    def __init__(self, did, tw, posTag):
         self.docId = did
         self.tw = tw
+        self.posTag = posTag
+
+
+if __name__ == "__main__":
+    articles = fileToArticles("data.json")
+    ir = IRModel()
+
+    for article in articles:
+        ir.addDoc(article)
+
+    ir.build()
+
+    # one word case
+    query1 = "funds"
+    cosineSimilarity1 = ir.rankedSearch(query1)
+
+    # two words case
+    query2 = "terrorist attack"
+    cosineSimilarity2 = ir.rankedSearch(query2)
+
+    # three words case
+    query3 = "US president Trump"
+    cosineSimilarity3 = ir.rankedSearch(query3)
+
+    # four words case
+    query4 = "Facebook negotiate Cambridge analytica"
+    cosineSimilarity4 = ir.rankedSearch(query4)
+
+    print(cosineSimilarity1)
+    print(cosineSimilarity2)
+    print(cosineSimilarity3)
+    print(cosineSimilarity4)
