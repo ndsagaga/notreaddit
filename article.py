@@ -10,9 +10,20 @@ class Article:
     def __init__(self, id, data):
         self.id = id
         self.title = data['title']
-        self.body = data['content']
-        self.timestamp = getTimestamp(data['date'], data['time'])
+        self.content = data['content']
+        self.timestamp = data['timestamp']  # getTimestamp(data['date'], data['time'])
         self.tokens, self.trees = process(data['content'])
+
+    def toJSON(self):
+        obj = dict()
+        obj['id'] = self.id
+        obj['title'] = self.title
+        obj['content'] = self.content
+        obj['timestamp'] = self.timestamp
+        obj['trees'] = [str(x) for x in self.trees]
+        obj['tokens'] = self.tokens
+
+        return obj
 
 
 def process(text):
@@ -40,6 +51,7 @@ def chunk(tokens, grammar=None):
     if grammar is None:
         # VVVV:RB MD VB - Check if this is required in the future
         grammar = ('''
+                    NNNP: {<NNP>+}
                     NNNN: {<DT>?<RB>*<JJ>*<NN.?>+}
                     VVVV: {<RB>*<VB.?>+}
                     NVN: {<.*N><VS><N.*>}
@@ -48,3 +60,4 @@ def chunk(tokens, grammar=None):
                     ''')
     chunkParser = nltk.RegexpParser(grammar)
     return chunkParser.parse(tokens)
+

@@ -56,11 +56,11 @@ def removeWordsWithTags(tokens):
                 tokenStack.append(n)
             continue
 
-        if isPreposition(token[1]) or isAdverb(token[1]) or isAdjective(token[1]):
+        if isPreposition(token[1]):
             tokenStack.append(token)
             continue
 
-        if token[1] in [',', '.', ':', '\'', '\"', '(', ')', '!', '-']:
+        if token[0] == token[1]:
             continue
 
     return tokenStack
@@ -105,5 +105,6 @@ def get_wordnet_pos(pos):
         return nltk.corpus.wordnet.NOUN
 
 
+# All pronouns are already dereferenced, but if by chance it has not, employ this method
 def closelyRelatedNoun(nouns, pronoun):
     return nouns[-1] if len(nouns) > 0 else None

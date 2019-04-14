@@ -5,6 +5,7 @@ import spacy
 
 from IRModel import IRModel
 from article import Article
+from pos_tag import posTag
 
 ir = None
 articles = []
@@ -43,19 +44,12 @@ def fileToArticles(filename):
 
 def search(query):
     results = ir.rankedSearch(query)
+    print(results)
 
-    for r in results:
-        print("Article id: " + str(articles[r].id))
-        print("Title: " + str(articles[r].title))
-        print("Content: " + str(articles[r].body))
+    result_articles = [articles[x].toJSON() for x in results]
 
-        # if running in remote headless server, will throw error
-        try:
-            articles[r].trees.draw()
-        except:
-            print(articles[r].trees)
-
-        print("-------------------------------------------------------------------------------")
+    modified_query = " ".join([x[0] for x in posTag(query)])
+    return json.dumps({"result": "success", "lemmatizedQuery": modified_query, "data": result_articles})
 
 
 def build(filename=None):
