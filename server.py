@@ -12,6 +12,7 @@ def search(query):
 
 @app.route('/')
 def hello_world():
+    notreaddit.build()
     return 'Welcome to !readdit'
 
 

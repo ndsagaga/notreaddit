@@ -1,5 +1,6 @@
-import math
 import operator
+
+import math
 
 from pos_tag import *
 
@@ -123,34 +124,3 @@ class DocTerm:
         self.docId = did
         self.tw = tw
         self.posTag = posTag
-
-
-if __name__ == "__main__":
-    articles = fileToArticles("data.json")
-    ir = IRModel()
-
-    for article in articles:
-        ir.addDoc(article)
-
-    ir.build()
-
-    # one word case
-    query1 = "funds"
-    cosineSimilarity1 = ir.rankedSearch(query1)
-
-    # two words case
-    query2 = "terrorist attack"
-    cosineSimilarity2 = ir.rankedSearch(query2)
-
-    # three words case
-    query3 = "US president Trump"
-    cosineSimilarity3 = ir.rankedSearch(query3)
-
-    # four words case
-    query4 = "Facebook negotiate Cambridge analytica"
-    cosineSimilarity4 = ir.rankedSearch(query4)
-
-    print(cosineSimilarity1)
-    print(cosineSimilarity2)
-    print(cosineSimilarity3)
-    print(cosineSimilarity4)

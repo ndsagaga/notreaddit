@@ -11,6 +11,8 @@ class Article:
         self.id = id
         self.title = data['title']
         self.content = data['content']
+        self.imageUrl = data['imageUrl']
+        self.readMoreUrl = data['readMoreUrl']
         self.timestamp = data['timestamp']  # getTimestamp(data['date'], data['time'])
         self.tokens, self.trees = process(data['content'])
 
@@ -19,6 +21,8 @@ class Article:
         obj['id'] = self.id
         obj['title'] = self.title
         obj['content'] = self.content
+        obj['imageUrl'] = self.imageUrl
+        obj['readMoreUrl'] = self.readMoreUrl
         obj['timestamp'] = self.timestamp
         obj['trees'] = [str(x) for x in self.trees]
         obj['tokens'] = self.tokens
