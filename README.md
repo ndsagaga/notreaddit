@@ -1,6 +1,6 @@
 # notreaddit
 
-notreaddit is an Information Retrieval (IR) system that creates semantic graphs for each document for better visualization.
+notreaddit is an Information Retrieval (IR) system that creates semantic graphs for each document for better visualization. View presentation [here](https://github.com/ndsagaga/notreaddit/blob/master/Knowledge%20Processing%20Technology.pptx).
 
 ## Requirements
 
